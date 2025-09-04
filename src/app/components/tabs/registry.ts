@@ -1,0 +1,38 @@
+import HiddenHeatwaves from "@/components/insights/pages/HiddenHeatwaves";
+{
+id: "dead-zones",
+title: "Expanding Oxygen Minimum Zones",
+subtitle: "Tracking OMZ area and core shoaling over time",
+lead: "BGC ARGO profiles show OMZ expansion and shoaling in the northern Indian Ocean.",
+focusRegion: "Arabian Sea & Bay of Bengal",
+color: "from-emerald-500 to-teal-500",
+component: DeadZones,
+},
+{
+id: "cyclone-fingerprints",
+title: "Cyclone Fingerprints in the Ocean",
+subtitle: "Short-term cooling & mixing caused by tropical cyclones",
+lead: "Collocating ARGO profiles with cyclone tracks shows rapid surface cooling and mixing.",
+focusRegion: "Bay of Bengal",
+color: "from-yellow-400 to-orange-500",
+component: CycloneFingerprints,
+},
+{
+id: "ocean-heat-storage",
+title: "Ocean Heat Storage (0–2000 m)",
+subtitle: "Quantifying heat content rise in the Indian Ocean and globally",
+lead: "Integrated OHC from ARGO profiles demonstrates sustained heat uptake.",
+focusRegion: "Indian Ocean & global",
+color: "from-indigo-500 to-pink-500",
+component: OceanHeatStorage,
+},
+{
+id: "ocean-connectivity",
+title: "Basin Connectivity & Ocean Highways",
+subtitle: "Where floats travel — travel times and pathway density",
+lead: "Lagrangian paths show preferred corridors and median travel times between basins.",
+focusRegion: "Indian Ocean corridors (BoB → AS → SoM)",
+color: "from-blue-400 to-cyan-500",
+component: OceanConnectivity,
+},
+];
