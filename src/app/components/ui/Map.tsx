@@ -46,10 +46,13 @@ if (typeof window !== 'undefined') {
 const ChangeView = ({ center, zoom, transition }: { center: LatLngExpression; zoom: number; transition: 'fly' | 'instant' }) => {
   const map = useMap();
   useEffect(() => {
-    if (transition === 'instant') {
-      map.setView(center, zoom);
-    } else {
-      map.flyTo(center, zoom, { duration: 2 });
+    // FIX: Add a check to ensure the map instance is defined before using it.
+    if (map) { 
+      if (transition === 'instant') {
+        map.setView(center, zoom);
+      } else {
+        map.flyTo(center, zoom, { duration: 2 });
+      }
     }
   }, [center, zoom, transition, map]);
   return null;

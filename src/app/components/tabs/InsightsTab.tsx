@@ -182,7 +182,7 @@ const INSIGHTS = [
     },
     how: [
       "Tag each profile position with basin polygons; detect transitions between basins for floats.",
-      "Aggregate transition probabilities and median travel times to build connectivity matrix.",
+      "Aggregate transition probabilities and median travel times to build a connectivity matrix.",
       "Visualize high-occupancy pathways using KDE and render Sankey for quick interpretation.",
     ],
   },
@@ -197,17 +197,17 @@ const INSIGHTS = [
 
 function InsightCard({ insight, onOpen }: { insight: any; onOpen: (id: string) => void }) {
   return (
-    <article className="p-5 rounded-xl bg-white dark:bg-slate-800 border hover:shadow-lg transition-shadow h-full flex flex-col justify-between">
+    <article className="p-5 rounded-xl bg-white dark:bg-slate-800 border dark:border-slate-700 hover:border-primary transition-all duration-300 shadow-md dark:shadow-xl hover:shadow-primary/30 dark:hover:shadow-primary/30 h-full flex flex-col justify-between">
       <div>
         <div className="flex items-center gap-3 mb-4">
-          <div className={`p-2 rounded-md bg-gradient-to-br ${insight.color} text-white`} aria-hidden>
+          <div className={`p-2 rounded-md bg-gradient-to-br ${insight.color} text-white shadow-lg`} aria-hidden>
             {/* simple icon placeholder */}
             <svg className="h-6 w-6" viewBox="0 0 24 24" fill="none">
               <circle cx="12" cy="12" r="8" stroke="currentColor" strokeWidth="1.5" />
             </svg>
           </div>
           <div>
-            <h3 className="text-lg font-semibold">{insight.title}</h3>
+            <h3 className="text-lg font-semibold text-foreground dark:text-white">{insight.title}</h3>
             <div className="text-xs text-muted-foreground mt-1">{insight.subtitle}</div>
           </div>
         </div>
@@ -219,7 +219,7 @@ function InsightCard({ insight, onOpen }: { insight: any; onOpen: (id: string) =
         <div className="flex items-center gap-3">
           <button
             onClick={() => onOpen(insight.id)}
-            className={`px-4 py-2 rounded-full font-semibold text-white bg-gradient-to-r ${insight.color} shadow hover:scale-105 transition-transform`}
+            className={`px-4 py-2 rounded-full font-semibold text-white bg-gradient-to-r ${insight.color} shadow-lg hover:scale-105 transition-transform duration-300`}
             aria-label={`Open ${insight.title}`}
           >
             View Insight
@@ -238,7 +238,7 @@ function BackBar({ onBack, title, region }: { onBack: () => void; title: string;
           <ArrowLeft size={18} />
         </button>
         <div>
-          <h2 className="text-xl font-bold">{title}</h2>
+          <h2 className="text-xl font-bold text-foreground dark:text-white">{title}</h2>
           <div className="text-xs text-muted-foreground">Region: {region}</div>
         </div>
       </div>
@@ -300,11 +300,11 @@ function DetailView({
       <BackBar onBack={onBack} title={insight.title} region={insight.focusRegion} />
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="bg-white dark:bg-slate-800 border rounded-lg p-4 shadow-sm">
+        <div className="bg-white dark:bg-slate-800 border dark:border-slate-700 rounded-xl p-4 shadow-md dark:shadow-xl">
           <div className="flex items-center justify-between mb-2">
-            <h4 className="font-semibold">Primary visual</h4>
+            <h4 className="font-semibold text-foreground dark:text-white">Primary visual</h4>
             <div className="flex items-center gap-2">
-              <button onClick={() => exportPNG(plotLeftId, `${insight.id}-left.png`)} className="text-xs px-3 py-1 border rounded hover:bg-muted">
+              <button onClick={() => exportPNG(plotLeftId, `${insight.id}-left.png`)} className="text-xs px-3 py-1 border rounded bg-muted hover:bg-muted/70 transition">
                 Download PNG
               </button>
             </div>
@@ -315,11 +315,11 @@ function DetailView({
           <p className="text-xs text-muted-foreground mt-3">{insight.subtitle}</p>
         </div>
 
-        <div className="bg-white dark:bg-slate-800 border rounded-lg p-4 shadow-sm">
+        <div className="bg-white dark:bg-slate-800 border dark:border-slate-700 rounded-xl p-4 shadow-md dark:shadow-xl">
           <div className="flex items-center justify-between mb-2">
-            <h4 className="font-semibold">Secondary visual</h4>
+            <h4 className="font-semibold text-foreground dark:text-white">Secondary visual</h4>
             <div className="flex items-center gap-2">
-              <button onClick={() => exportPNG(plotRightId, `${insight.id}-right.png`)} className="text-xs px-3 py-1 border rounded hover:bg-muted">
+              <button onClick={() => exportPNG(plotRightId, `${insight.id}-right.png`)} className="text-xs px-3 py-1 border rounded bg-muted hover:bg-muted/70 transition">
                 Download PNG
               </button>
             </div>
@@ -331,8 +331,8 @@ function DetailView({
         </div>
       </div>
 
-      <section className="mt-6 bg-white dark:bg-slate-800 border rounded-lg p-4 shadow-sm">
-        <h4 className="font-semibold">How this was calculated</h4>
+      <section className="mt-6 bg-white dark:bg-slate-800 border dark:border-slate-700 rounded-xl p-4 shadow-md dark:shadow-xl">
+        <h4 className="font-semibold text-foreground dark:text-white">How this was calculated</h4>
         <div className="mt-3 text-sm text-muted-foreground space-y-2">
           {insight.how.map((line: string, idx: number) => (
             <div key={idx} className="flex gap-3 items-start">
@@ -350,7 +350,7 @@ function DetailView({
    Main component exported by file
    - Renders index grid or detail view based on selectedId state
    =========================== */
-export default function InsightsPackedSingleFile() {
+export default function InsightsTab() {
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
   useEffect(() => {
@@ -375,9 +375,9 @@ export default function InsightsPackedSingleFile() {
   // index view
   if (!selectedId) {
     return (
-      <main className="min-h-screen p-6 md:p-12 bg-slate-50 dark:bg-slate-900">
+      <main className="min-h-screen p-6 md:p-12 bg-slate-50 dark:bg-slate-900 transition-colors duration-500 rounded-xl shadow-lg">
         <header className="max-w-6xl mx-auto mb-8">
-          <h1 className="text-3xl md:text-4xl font-extrabold">Insights — Indian Ocean Focus</h1>
+          <h1 className="text-3xl md:text-4xl font-extrabold text-foreground dark:text-white">Insights — Indian Ocean Focus</h1>
           <p className="text-muted-foreground mt-2">
             A curated set of professional insights derived from ARGO floats. Click any card to open a dedicated insight page with mock visualizations for frontend implementation.
           </p>
@@ -401,7 +401,7 @@ export default function InsightsPackedSingleFile() {
   if (!insight) return null;
 
   return (
-    <main className="min-h-screen p-6 md:p-12 bg-slate-50 dark:bg-slate-900">
+    <main className="min-h-screen p-6 md:p-12 bg-slate-50 dark:bg-slate-900 transition-colors duration-500 rounded-xl shadow-lg">
       <div className="max-w-6xl mx-auto">
         <DetailView insight={insight} onBack={closeInsight} />
       </div>
