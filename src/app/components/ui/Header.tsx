@@ -48,8 +48,8 @@ export default function Header({ theme, setTheme, activeTab, setActiveTab, mode,
             key={id}
             onClick={() => handleTabClick(id)}
             className={`w-full text-left flex items-center gap-4 px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200
-            ${activeTab === id 
-              ? "bg-sky-800 dark:bg-primary text-white shadow-lg dark:shadow-primary/50 scale-105" 
+            ${activeTab === id
+              ? "bg-sky-800 dark:bg-primary text-white shadow-lg dark:shadow-primary/50 scale-105"
               : "text-muted-foreground hover:bg-muted/50 hover:text-foreground"}
             `}
           >
@@ -74,9 +74,13 @@ export default function Header({ theme, setTheme, activeTab, setActiveTab, mode,
             <span className={`text-sm font-medium transition-colors duration-300 ${mode === 'researcher' ? 'text-foreground' : 'text-muted-foreground'}`}>Researcher</span>
           </div>
         </div>
-        <button onClick={() => setTheme((t) => (t === "dark" ? "light" : "dark"))} className={`w-full flex items-center gap-4 p-2 rounded-lg hover:bg-muted/50 transition-colors`}>
-          {theme === "dark" ? <Sun size={24} /> : <Moon size={24} />}
-          <span className={`transition-opacity duration-200 ${isSidebarOpen ? 'opacity-100' : 'opacity-0 hidden'}`}>{theme === "dark" ? "Light Mode" : "Dark Mode"}</span>
+        {/* MODIFIED: Replaced text button with icon-only button for simplicity */}
+        <button
+            onClick={() => setTheme((t) => (t === "dark" ? "light" : "dark"))}
+            className={`w-full flex items-center justify-center p-3 rounded-lg hover:bg-muted/50 transition-colors`}
+            aria-label={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+        >
+            {theme === "dark" ? <Sun size={20} /> : <Moon size={20} />}
         </button>
       </div>
     </aside>
