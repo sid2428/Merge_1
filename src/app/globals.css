@@ -227,3 +227,45 @@ body {
 .animate-fade-in-down {
   animation: fade-in-down 0.5s ease-out;
 }
+
+/* --- Add these new styles at the end of the file --- */
+
+.chat-aurora-container {
+    position: relative;
+    overflow: hidden;
+}
+
+.chat-aurora-container::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 900px;
+    height: 700px;
+    background-image: radial-gradient(circle, rgba(0, 119, 182, 0.2) 0%, rgba(240, 247, 255, 0) 50%);
+    animation: aurora-spin 25s linear infinite;
+    z-index: 1;
+}
+
+.dark .chat-aurora-container::before {
+    background-image: radial-gradient(circle, rgba(59, 130, 246, 0.1) 0%, rgba(13, 17, 23, 0) 50%);
+}
+
+@keyframes aurora-spin {
+    from {
+        transform: translate(-50%, -50%) rotate(0deg);
+    }
+    to {
+        transform: translate(-50%, -50%) rotate(360deg);
+    }
+}
+
+/* This ensures all chat content sits on top of the aurora effect */
+.chat-content-wrapper {
+    position: relative;
+    z-index: 2;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}

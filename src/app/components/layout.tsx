@@ -1,16 +1,15 @@
 import type { Metadata } from "next";
-import { Poppins, Fira_Code } from "next/font/google"; // New fonts imported
+import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
-const poppins = Poppins({
+const geistSans = Geist({
+  variable: "--font-geist-sans",
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-  variable: "--font-poppins",
 });
 
-const firaCode = Fira_Code({
+const geistMono = Geist_Mono({
+  variable: "--font-geist-mono",
   subsets: ["latin"],
-  variable: "--font-fira-code",
 });
 
 export const metadata: Metadata = {
@@ -26,7 +25,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${poppins.variable} ${firaCode.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} font-sans antialiased`}
       >
         {children}
       </body>
