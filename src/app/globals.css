@@ -336,13 +336,6 @@ body {
   * { @apply border-border outline-ring/50; }
   body { @apply bg-background text-foreground; }
 }
-
-/* ======================================================
-   Notes:
-   - Use .custom-scrollbar on elements where you want the compact scrollbar.
-   - Tweak --radius to change global border radii.
-   - For maximum browser compatibility, prefer the hex fallbacks (--*-hex variables).
-   - If you want automated dark-mode toggling, I can add a tiny JS snippet to:
-       1) follow system preference, and
-       2) persist user choice in localStorage.
-   ====================================================== */
+.animate-fade-in-down {
+  animation: fade-in-down 0.5s ease-out;
+}

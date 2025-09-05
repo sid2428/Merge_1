@@ -2,6 +2,8 @@
 
 import React, { useEffect, useMemo, useState } from "react";
 import dynamic from "next/dynamic";
+// FIXED: Added Download and Printer to the import statement
+import { Download, Printer } from 'lucide-react';
 
 const Plot = dynamic(() => import("react-plotly.js"), { ssr: false });
 
@@ -339,16 +341,16 @@ export default function CompareTab({ theme = "light", floats: floatsProp, depths
         {/* header + controls */}
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
           <div>
-            <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight">Compare — Float Profiles</h1>
-            <p className="mt-1 text-sm text-slate-500">Fast researcher view · clear visuals · exportable reports · selectable ocean presets</p>
+            <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight text-foreground">Compare — Float Profiles</h1>
+            <p className="mt-1 text-sm text-muted-foreground">Fast researcher view · clear visuals · exportable reports · selectable ocean presets</p>
           </div>
 
           <div className="flex items-center gap-3">
-            <label className="text-sm text-slate-600">Ocean</label>
+            <label className="text-sm text-muted-foreground">Ocean</label>
             <select
               value={ocean}
               onChange={(e) => setOcean(e.target.value)}
-              className="px-3 py-2 border rounded bg-white text-sm"
+              className="px-3 py-2 border rounded bg-card text-foreground border-muted text-sm"
               aria-label="Select ocean"
             >
               {Object.keys(oceanPresets).map((key) => (
@@ -358,11 +360,13 @@ export default function CompareTab({ theme = "light", floats: floatsProp, depths
               ))}
             </select>
 
-            <button onClick={downloadCSV} className="px-3 py-2 rounded bg-white border text-sm shadow-sm">
-              ⤓ CSV
+            <button onClick={downloadCSV} className="px-3 py-2 rounded bg-card border border-muted text-sm shadow-sm text-foreground hover:bg-muted">
+                <Download size={16} className="inline mr-2" />
+                CSV
             </button>
-            <button onClick={exportReport} className="px-3 py-2 rounded bg-indigo-600 text-white shadow-sm text-sm">
-              🖨️ Export
+            <button onClick={exportReport} className="px-3 py-2 rounded bg-primary text-primary-foreground shadow-sm text-sm">
+                <Printer size={16} className="inline mr-2" />
+                Export
             </button>
           </div>
         </div>
@@ -370,7 +374,7 @@ export default function CompareTab({ theme = "light", floats: floatsProp, depths
         {/* main layout */}
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           {/* chart area */}
-          <div className="lg:col-span-3 bg-white rounded-xl p-3 border shadow-sm relative" style={{ minHeight: 520 }}>
+          <div className="lg:col-span-3 bg-card rounded-xl p-3 border border-muted shadow-sm relative" style={{ minHeight: 520 }}>
             {/* instant preview */}
             {!plotReady && (
               <div className="absolute inset-0 z-10 flex items-center justify-center p-6">
@@ -395,8 +399,8 @@ export default function CompareTab({ theme = "light", floats: floatsProp, depths
             </div>
 
             {/* right-side floating legend (keeps plot uncluttered) */}
-            <div className="absolute right-6 top-6 w-56 bg-white rounded-lg p-3 shadow-lg border" style={{ zIndex: 40 }}>
-              <div className="text-sm font-semibold mb-2">Legend</div>
+            <div className="absolute right-6 top-6 w-56 bg-card/80 backdrop-blur-md rounded-lg p-3 shadow-lg border border-muted" style={{ zIndex: 40 }}>
+              <div className="text-sm font-semibold mb-2 text-foreground">Legend</div>
               <div className="space-y-2 text-sm">
                 {floatsFromPreset.map((f) => (
                   <label key={f.id} className="flex items-center justify-between gap-3">
@@ -404,11 +408,10 @@ export default function CompareTab({ theme = "light", floats: floatsProp, depths
                       <input type="checkbox" checked={visibleIds.includes(f.id)} onChange={() => toggleVisible(f.id)} />
                       <div style={{ width: 12, height: 12, background: f.color, borderRadius: 3 }} />
                       <div className="leading-tight">
-                        <div className="font-medium text-xs">{f.id}</div>
-                        <div className="text-[11px] text-slate-500">{f.emoji} Surface {f.temps[0]}°C</div>
+                        <div className="font-medium text-xs text-foreground">{f.id}</div>
+                        <div className="text-[11px] text-muted-foreground">{f.emoji} Surface {f.temps[0]}°C</div>
                       </div>
                     </div>
-                    <div className="text-xs text-slate-400">{/* small placeholder */}</div>
                   </label>
                 ))}
               </div>
@@ -416,23 +419,23 @@ export default function CompareTab({ theme = "light", floats: floatsProp, depths
           </div>
 
           {/* right column: controls + stats */}
-          <aside className="bg-white rounded-xl p-4 border shadow-sm">
+          <aside className="bg-card rounded-xl p-4 border border-muted shadow-sm">
             {/* curve style */}
             <div className="mb-4">
-              <div className="text-sm font-semibold mb-2">Visual</div>
-              <label className="inline-flex items-center gap-2 text-sm">
+              <div className="text-sm font-semibold mb-2 text-foreground">Visual</div>
+              <label className="inline-flex items-center gap-2 text-sm text-foreground">
                 <input type="checkbox" checked={smoothCurves} onChange={() => setSmoothCurves((s) => !s)} />
                 Smooth curves
               </label>
               <div className="mt-3 text-sm">
-                <label className="inline-flex items-center gap-2">
+                <label className="inline-flex items-center gap-2 text-foreground">
                   <input type="checkbox" checked={showThermoclineBand} onChange={() => setShowThermoclineBand((s) => !s)} />
                   Show thermocline band
                 </label>
                 {showThermoclineBand && (
                   <div className="mt-2 grid grid-cols-2 gap-2 text-xs">
-                    <input type="number" className="px-2 py-1 border rounded" value={thermoclineRange.min} onChange={(e) => setThermoclineRange((r) => ({ ...r, min: Number(e.target.value) }))} />
-                    <input type="number" className="px-2 py-1 border rounded" value={thermoclineRange.max} onChange={(e) => setThermoclineRange((r) => ({ ...r, max: Number(e.target.value) }))} />
+                    <input type="number" className="px-2 py-1 border rounded bg-background text-foreground border-muted" value={thermoclineRange.min} onChange={(e) => setThermoclineRange((r) => ({ ...r, min: Number(e.target.value) }))} />
+                    <input type="number" className="px-2 py-1 border rounded bg-background text-foreground border-muted" value={thermoclineRange.max} onChange={(e) => setThermoclineRange((r) => ({ ...r, max: Number(e.target.value) }))} />
                   </div>
                 )}
               </div>
@@ -440,20 +443,20 @@ export default function CompareTab({ theme = "light", floats: floatsProp, depths
 
             {/* depth range */}
             <div className="mb-4">
-              <div className="text-sm font-semibold mb-2">Depth range (m)</div>
+              <div className="text-sm font-semibold mb-2 text-foreground">Depth range (m)</div>
               <div className="grid grid-cols-2 gap-2 text-sm">
-                <input type="number" className="px-2 py-1 border rounded" value={depthRange.min} onChange={(e) => setDepthRange((d) => ({ ...d, min: Number(e.target.value) }))} />
-                <input type="number" className="px-2 py-1 border rounded" value={depthRange.max} onChange={(e) => setDepthRange((d) => ({ ...d, max: Number(e.target.value) }))} />
+                <input type="number" className="px-2 py-1 border rounded bg-background text-foreground border-muted" value={depthRange.min} onChange={(e) => setDepthRange((d) => ({ ...d, min: Number(e.target.value) }))} />
+                <input type="number" className="px-2 py-1 border rounded bg-background text-foreground border-muted" value={depthRange.max} onChange={(e) => setDepthRange((d) => ({ ...d, max: Number(e.target.value) }))} />
               </div>
             </div>
 
             {/* stats table compact */}
             <div>
-              <div className="text-sm font-semibold mb-2">Float summary</div>
+              <div className="text-sm font-semibold mb-2 text-foreground">Float summary</div>
               <div className="overflow-auto max-h-[260px]">
                 <table className="w-full text-sm border-collapse">
-                  <thead className="sticky top-0 bg-white">
-                    <tr className="text-xs text-slate-500">
+                  <thead className="sticky top-0 bg-card">
+                    <tr className="text-xs text-muted-foreground">
                       <th className="text-left py-2">Float</th>
                       <th className="text-right py-2 pr-3">Surf</th>
                       <th className="text-right py-2 pr-3">Min</th>
@@ -463,20 +466,20 @@ export default function CompareTab({ theme = "light", floats: floatsProp, depths
                   </thead>
                   <tbody>
                     {stats.map((s, idx) => (
-                      <tr key={s.id} className={idx % 2 === 0 ? "bg-slate-50" : ""}>
-                        <td className="py-2 text-sm font-medium">
+                      <tr key={s.id} className={idx % 2 === 0 ? "bg-muted/50" : ""}>
+                        <td className="py-2 text-sm font-medium text-foreground">
                           <div className="flex items-center gap-2">
                             <div style={{ width: 10, height: 10, background: s.color, borderRadius: 3 }} />
                             <div>
                               <div className="text-sm">{s.id}</div>
-                              <div className="text-[11px] text-slate-400">{s.emoji}</div>
+                              <div className="text-[11px] text-muted-foreground">{s.emoji}</div>
                             </div>
                           </div>
                         </td>
-                        <td className="py-2 text-right pr-3">{s.surface.toFixed(2)}</td>
-                        <td className="py-2 text-right pr-3">{s.min.toFixed(2)}</td>
-                        <td className="py-2 text-right pr-3">{s.max.toFixed(2)}</td>
-                        <td className="py-2 text-right pr-3">{s.mean.toFixed(2)}</td>
+                        <td className="py-2 text-right pr-3 text-foreground">{s.surface.toFixed(2)}</td>
+                        <td className="py-2 text-right pr-3 text-foreground">{s.min.toFixed(2)}</td>
+                        <td className="py-2 text-right pr-3 text-foreground">{s.max.toFixed(2)}</td>
+                        <td className="py-2 text-right pr-3 text-foreground">{s.mean.toFixed(2)}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -486,10 +489,10 @@ export default function CompareTab({ theme = "light", floats: floatsProp, depths
 
             {/* quick actions */}
             <div className="mt-4 flex gap-2">
-              <button className="flex-1 px-3 py-2 border rounded text-sm" onClick={() => setVisibleIds(floatsFromPreset.map((f) => f.id))}>
+              <button className="flex-1 px-3 py-2 border rounded text-sm text-foreground hover:bg-muted" onClick={() => setVisibleIds(floatsFromPreset.map((f) => f.id))}>
                 Show all
               </button>
-              <button className="flex-1 px-3 py-2 border rounded text-sm" onClick={() => setVisibleIds([])}>
+              <button className="flex-1 px-3 py-2 border rounded text-sm text-foreground hover:bg-muted" onClick={() => setVisibleIds([])}>
                 Hide all
               </button>
             </div>
@@ -498,26 +501,26 @@ export default function CompareTab({ theme = "light", floats: floatsProp, depths
 
         {/* Key takeaways — emphasized */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-          <div className="lg:col-span-2 bg-white rounded-xl p-4 border shadow-sm">
+          <div className="lg:col-span-2 bg-card rounded-xl p-4 border border-muted shadow-sm">
             <div className="flex items-start gap-4">
-              <div className="w-2 bg-indigo-600 rounded" />
+              <div className="w-2 bg-primary rounded" />
               <div>
-                <h3 className="text-lg font-semibold">Key takeaways</h3>
-                <ul className="mt-3 space-y-3 text-sm text-slate-700">
+                <h3 className="text-lg font-semibold text-foreground">Key takeaways</h3>
+                <ul className="mt-3 space-y-3 text-sm text-muted-foreground">
                   <li>
-                    <span className="inline-block px-2 py-0.5 bg-red-100 text-red-700 rounded text-xs font-semibold mr-2">Priority</span>
+                    <span className="inline-block px-2 py-0.5 bg-red-500/10 text-red-500 rounded text-xs font-semibold mr-2">Priority</span>
                     <strong>Warm-core detection:</strong> {stats[0] ? `${stats[0].id} shows the highest surface temperature (${stats[0].surface}°C).` : "—"}
                   </li>
                   <li>
-                    <span className="inline-block px-2 py-0.5 bg-blue-100 text-blue-700 rounded text-xs font-semibold mr-2">Important</span>
+                    <span className="inline-block px-2 py-0.5 bg-blue-500/10 text-blue-500 rounded text-xs font-semibold mr-2">Important</span>
                     <strong>Cold intrusion / upwelling:</strong> check floats with sharp gradients (listed under thermocline detection). We highlight thermocline approximations on the chart for quick inspection.
                   </li>
                   <li>
-                    <span className="inline-block px-2 py-0.5 bg-yellow-100 text-yellow-800 rounded text-xs font-semibold mr-2">Note</span>
+                    <span className="inline-block px-2 py-0.5 bg-yellow-500/10 text-yellow-500 rounded text-xs font-semibold mr-2">Note</span>
                     <strong>Convergence at depth:</strong> profiles often converge in deep layers — examine deeper bins for regional uniformity.
                   </li>
                   <li>
-                    <span className="inline-block px-2 py-0.5 bg-green-100 text-green-800 rounded text-xs font-semibold mr-2">Action</span>
+                    <span className="inline-block px-2 py-0.5 bg-green-500/10 text-green-500 rounded text-xs font-semibold mr-2">Action</span>
                     <strong>Next steps:</strong> overlay baseline climatology, add per-measurement error (for confidence bands), and collect higher-resolution near thermocline.
                   </li>
                 </ul>
@@ -525,16 +528,16 @@ export default function CompareTab({ theme = "light", floats: floatsProp, depths
             </div>
           </div>
 
-          <div className="bg-white rounded-xl p-4 border shadow-sm">
-            <h4 className="font-semibold">Thermocline summary</h4>
+          <div className="bg-card rounded-xl p-4 border border-muted shadow-sm">
+            <h4 className="font-semibold text-foreground">Thermocline summary</h4>
             <div className="mt-3 text-sm">
               {stats.map((s) => (
                 <div key={s.id} className="mb-2">
                   <div className="flex items-center justify-between">
-                    <div className="text-sm font-medium">{s.id}</div>
-                    <div className="text-xs text-slate-500">{s.thermocline ? `${s.thermocline.depth} m` : "—"}</div>
+                    <div className="text-sm font-medium text-foreground">{s.id}</div>
+                    <div className="text-xs text-muted-foreground">{s.thermocline ? `${s.thermocline.depth} m` : "—"}</div>
                   </div>
-                  <div className="text-[12px] text-slate-500">Gradient: {s.thermocline ? s.thermocline.gradient.toFixed(3) : "—"}</div>
+                  <div className="text-[12px] text-muted-foreground">Gradient: {s.thermocline ? s.thermocline.gradient.toFixed(3) : "—"}</div>
                 </div>
               ))}
             </div>
