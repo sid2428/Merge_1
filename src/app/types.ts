@@ -1,5 +1,5 @@
 import { FC } from "react";
-import { MessageSquare, BarChart2, GitCompare, Zap, Info, User, GraduationCap } from 'lucide-react';
+import { MessageSquare, BarChart2, GitCompare, Zap, Info } from 'lucide-react';
 
 export type Tab = "chat" | "visualize" | "compare" | "insights" | "about";
 export type MapTransition = "fly" | "instant";
@@ -9,6 +9,13 @@ export interface TabConfig {
   id: Tab;
   label: string;
   icon: FC<any>;
+}
+
+export interface Message {
+    id: number;
+    text: string;
+    sender: 'user' | 'bot';
+    visual?: boolean;
 }
 
 export const RESEARCHER_TABS: TabConfig[] = [

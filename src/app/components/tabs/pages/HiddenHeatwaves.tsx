@@ -17,7 +17,7 @@ const how = [
 
 return (
 <InsightLayout
-title="Hidden Subsurface Heatwaves"
+title="Hidden Subsurface hjasdjc"
 region="Indian Ocean (Bay of Bengal & Arabian Sea)"
 subtitle="Detecting thermal anomalies at 50–150 m that satellites miss"
 onBack={onBack}

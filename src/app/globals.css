@@ -1,71 +1,204 @@
 @import "tailwindcss";
 @import "leaflet/dist/leaflet.css";
+@import "tw-animate-css";
 
-/* --- Coastal Breeze Light Theme --- */
+/* ======================================================
+   Unified global.css
+   - High-fidelity OKLCH palette (preferred)
+   - Hex fallbacks / simpler aliases for compatibility
+   - Animations, waves, dripping, sidebar helpers
+   ====================================================== */
+
+/* --- Custom dark selector helper (Tailwind friendly) --- */
+@custom-variant dark (&:is(.dark *));
+
+/* ======================================================
+   Theme variables
+   - primary: OKLCH (precision)
+   - fallback hex variables for compatibility
+   - includes the simple "Base Theme Variables" you provided
+   ====================================================== */
+
+/* --- Coastal Breeze Light Theme (detailed OKLCH + hex fallbacks) --- */
 :root {
-  --background: #f0f7ff; /* Light sky blue */
-  --foreground: #2d3748; /* Dark slate gray */
-  --primary: #0077b6;    /* Vibrant ocean blue */
-  --primary-foreground: #ffffff;
-  --card: #ffffff;
-  --card-foreground: #2d3748;
-  --muted: #e2e8f0;      /* Soft gray */
-  --muted-foreground: #4a5568; /* Medium slate gray */
-  --water-color: #007bff;
+  /* High-fidelity OKLCH palette */
+  --primary: oklch(0.208 0.042 265.755);    /* Vibrant ocean blue */
+  --primary-foreground: oklch(0.984 0.003 247.858);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.129 0.042 264.695);
+  --muted: oklch(0.968 0.007 247.896);      /* Soft gray */
+  --muted-foreground: oklch(0.554 0.046 257.417); /* Medium slate gray */
+  --water-color: #007bff; /* hex fallback for components expecting hex */
+  --radius: 0.625rem;
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.129 0.042 264.695);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.129 0.042 264.695);
+  --secondary: oklch(0.968 0.007 247.896);
+  --secondary-foreground: oklch(0.208 0.042 265.755);
+  --accent: oklch(0.968 0.007 247.896);
+  --accent-foreground: oklch(0.208 0.042 265.755);
+  --destructive: oklch(0.577 0.245 27.325);
+  --border: oklch(0.929 0.013 255.508);
+  --input: oklch(0.929 0.013 255.508);
+  --ring: oklch(0.704 0.04 256.788);
+  --chart-1: oklch(0.646 0.222 41.116);
+  --chart-2: oklch(0.6 0.118 184.704);
+  --chart-3: oklch(0.398 0.07 227.392);
+  --chart-4: oklch(0.828 0.189 84.429);
+  --chart-5: oklch(0.769 0.188 70.08);
+  --sidebar: oklch(0.984 0.003 247.858);
+  --sidebar-foreground: oklch(0.129 0.042 264.695);
+  --sidebar-primary: oklch(0.208 0.042 265.755);
+  --sidebar-primary-foreground: oklch(0.984 0.003 247.858);
+  --sidebar-accent: oklch(0.968 0.007 247.896);
+  --sidebar-accent-foreground: oklch(0.208 0.042 265.755);
+  --sidebar-border: oklch(0.929 0.013 255.508);
+  --sidebar-ring: oklch(0.704 0.04 256.788);
+
+  /* Helpful compatibility aliases & simple base variables */
+  --surface: #f8fafc;
+  --surface-foreground: #2d3748;
+  --background-hex: #f0f7ff; /* fallback background */
+  --foreground-hex: #2d3748; /* fallback foreground */
+  --primary-hex: #0077b6;
+  --card-hex: #ffffff;
+  --muted-hex: #e2e8f0;
+  --muted-foreground-hex: #4a5568;
+  --border-hex: #e2e8f0;
 }
 
-/* --- Midnight Ocean Dark Theme --- */
+/* --- Midnight Ocean Dark Theme (OKLCH + hex fallbacks) --- */
 .dark {
-  --background: #0d1117;
-  --foreground: #e6edf3;
-  --primary: #3b82f6;
-  --primary-foreground: #ffffff;
-  --card: #161b22;
-  --card-foreground: #e6edf3;
-  --muted: #21262d;
-  --muted-foreground: #8d96a0;
+  --background: oklch(0.129 0.042 264.695);
+  --foreground: oklch(0.984 0.003 247.858);
+  --primary: oklch(0.929 0.013 255.508);
+  --primary-foreground: oklch(0.208 0.042 265.755);
+  --card: oklch(0.208 0.042 265.755);
+  --card-foreground: oklch(0.984 0.003 247.858);
+  --muted: oklch(0.279 0.041 260.031);
+  --muted-foreground: oklch(0.704 0.04 256.788);
   --water-color: #007bff;
+  --popover: oklch(0.208 0.042 265.755);
+  --popover-foreground: oklch(0.984 0.003 247.858);
+  --secondary: oklch(0.279 0.041 260.031);
+  --secondary-foreground: oklch(0.984 0.003 247.858);
+  --accent: oklch(0.279 0.041 260.031);
+  --accent-foreground: oklch(0.984 0.003 247.858);
+  --destructive: oklch(0.704 0.191 22.216);
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: oklch(0.551 0.027 264.364);
+  --chart-1: oklch(0.488 0.243 264.376);
+  --chart-2: oklch(0.696 0.17 162.48);
+  --chart-3: oklch(0.769 0.188 70.08);
+  --chart-4: oklch(0.627 0.265 303.9);
+  --chart-5: oklch(0.645 0.246 16.439);
+  --sidebar: oklch(0.208 0.042 265.755);
+  --sidebar-foreground: oklch(0.984 0.003 247.858);
+  --sidebar-primary: oklch(0.488 0.243 264.376);
+  --sidebar-primary-foreground: oklch(0.984 0.003 247.858);
+  --sidebar-accent: oklch(0.279 0.041 260.031);
+  --sidebar-accent-foreground: oklch(0.984 0.003 247.858);
+  --sidebar-border: oklch(1 0 0 / 10%);
+  --sidebar-ring: oklch(0.551 0.027 264.364);
+
+  /* Hex fallbacks for older browsers / third-party components */
+  --background-hex: #0d1117;
+  --foreground-hex: #e6edf3;
+  --primary-hex: #3b82f6;
+  --card-hex: #161b22;
+  --surface: #1e293b;
+  --border-hex: #30363d;
 }
 
-/* Animated Gradient Background */
+/* ======================================================
+   Animations
+   - single definitions, reused by helper classes below
+   ====================================================== */
 @keyframes gradient-animation {
   0% { background-position: 0% 50%; }
   50% { background-position: 100% 50%; }
   100% { background-position: 0% 50%; }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+@keyframes wave-motion-cinematic {
+  0% { transform: translateX(-50%) translateY(100%) rotate(0deg); }
+  20% { transform: translateX(-50%) translateY(-20%) rotate(-5deg); }
+  50% { transform: translateX(-50%) translateY(-10%) rotate(5deg); }
+  80% { transform: translateX(-50%) translateY(-15%) rotate(-2deg); }
+  100% { transform: translateX(-50%) translateY(100%) rotate(0deg); }
+}
+@keyframes wave-sequence { 0% { opacity: 1; } 100% { opacity: 0; } }
 
-  background: linear-gradient(-45deg, #e0f2fe, #f0f7ff, #e6f7ff, #dcf8ff);
-  background-size: 400% 400%;
-  animation: gradient-animation 25s ease infinite;
+@keyframes drip-fall {
+  0% { transform: translateY(0); height: 0; opacity: 1; }
+  20% { height: 10px; opacity: 1; }
+  100% { transform: translateY(40px); height: 10px; opacity: 0; }
+}
+@keyframes last-drip-fall {
+  0% { transform: translateY(0); height: 0; width: 0; opacity: 1; }
+  50% { transform: translateY(20px); height: 10px; width: 6px; opacity: 1; }
+  100% { transform: translateY(50px); height: 10px; width: 6px; opacity: 0; }
 }
 
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes fade-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes plot-appear { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+@keyframes pulse-slow {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.05); opacity: 0.8; }
+}
+@keyframes fade-in-down { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+
+/* ======================================================
+   Body/base styles
+   - Prefer dynamic OKLCH vars but provide hex fallbacks
+   - For light theme we keep animated gradient; dark disables it
+   ====================================================== */
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+
+  /* Background layering: prefer var(--background) but animate light gradient for visual flair */
+  background-color: var(--background-hex, #f0f7ff);
+  background-image: linear-gradient(-45deg, #e0f2fe, #f0f7ff, #e6f7ff, #dcf8ff);
+  background-size: 400% 400%;
+  animation: gradient-animation 25s ease infinite;
+
+  color: var(--foreground, var(--foreground-hex));
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* In dark mode, use the specified dark background and stop the animated gradient for contrast */
 .dark body {
   background: var(--background);
   animation: none;
 }
 
-/* Custom scrollbar */
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
-::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
-  border-radius: 4px;
-}
-.dark ::-webkit-scrollbar-thumb {
-  background: #4b5563;
-}
-::-webkit-scrollbar-track {
-  background: transparent;
-}
+/* ======================================================
+   Scrollbars
+   - global default, and .custom-scrollbar opt-in class
+   ====================================================== */
+/* Global scrollbar (keeps earlier look) */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-thumb { background: var(--border-hex, #cbd5e1); border-radius: 4px; }
+.dark ::-webkit-scrollbar-thumb { background: #4b5563; }
+::-webkit-scrollbar-track { background: transparent; }
 
-/* Cinematic Wave Animation Styles */
+/* Opt-in custom scrollbar (from second snippet) */
+.custom-scrollbar::-webkit-scrollbar { width: 6px; }
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: var(--border-hex, var(--border, #e2e8f0));
+  border-radius: 3px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover { background: var(--muted-foreground-hex, var(--muted-foreground)); }
+.custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+
+/* ======================================================
+   Wave / Drip UI overlays (pointer-events: none; never block UI)
+   ====================================================== */
 .wave-animation-overlay {
   position: fixed;
   top: 0;
@@ -89,111 +222,62 @@ body {
   opacity: 0.9;
   animation: wave-motion-cinematic 5s ease-in-out forwards;
 }
-.wave-back {
-  animation-delay: 0s;
-  background: color-mix(in srgb, var(--water-color) 80%, black);
-}
-.wave-mid {
-  animation-delay: 0.2s;
-  background: color-mix(in srgb, var(--water-color) 90%, black);
-}
-.wave-front {
-  animation-delay: 0.4s;
-  background: var(--water-color);
-}
-@keyframes wave-motion-cinematic {
-  0% { transform: translateX(-50%) translateY(100%) rotate(0deg); }
-  20% { transform: translateX(-50%) translateY(-20%) rotate(-5deg); }
-  50% { transform: translateX(-50%) translateY(-10%) rotate(5deg); }
-  80% { transform: translateX(-50%) translateY(-15%) rotate(-2deg); }
-  100% { transform: translateX(-50%) translateY(100%) rotate(0deg); }
-}
-@keyframes wave-sequence {
-  0% { opacity: 1; }
-  100% { opacity: 0; }
-}
-.dripping-container {
-  position: relative;
-  overflow: visible;
-}
-.dripping-container > * {
-  position: relative;
-  z-index: 101;
-}
+.wave-back { animation-delay: 0s; background: color-mix(in srgb, var(--water-color) 80%, black); }
+.wave-mid  { animation-delay: 0.2s; background: color-mix(in srgb, var(--water-color) 90%, black); }
+.wave-front{ animation-delay: 0.4s; background: var(--water-color); }
+
+/* Dripping accent for hero sections */
+.dripping-container { position: relative; overflow: visible; }
+.dripping-container > * { position: relative; z-index: 101; }
 .dripping-container::before,
 .dripping-container::after {
-    content: "";
-    position: absolute;
-    top: 100%;
-    left: 50%;
-    width: 2px;
-    height: 0;
-    background-color: var(--water-color);
-    pointer-events: none;
-    z-index: 99;
-    opacity: 0;
-    border-radius: 50%;
-    animation: drip-fall 1.5s ease-in-out forwards;
-    animation-delay: 4.5s;
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  width: 2px;
+  height: 0;
+  background-color: var(--water-color);
+  pointer-events: none;
+  z-index: 99;
+  opacity: 0;
+  border-radius: 50%;
+  animation: drip-fall 1.5s ease-in-out forwards;
+  animation-delay: 4.5s;
 }
-.dripping-container::after {
-    left: 70%;
-    animation-delay: 4.7s;
-}
+.dripping-container::after { left: 70%; animation-delay: 4.7s; }
 .dripping-container:last-child::before {
-    left: 50%;
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    animation: last-drip-fall 1.5s ease-in-out forwards;
-    animation-delay: 5s;
+  left: 50%;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  animation: last-drip-fall 1.5s ease-in-out forwards;
+  animation-delay: 5s;
 }
-@keyframes drip-fall {
-  0% { transform: translateY(0); height: 0; opacity: 1; }
-  20% { height: 10px; opacity: 1; }
-  100% { transform: translateY(40px); height: 10px; opacity: 0; }
-}
-@keyframes last-drip-fall {
-    0% { transform: translateY(0); height: 0; width: 0; opacity: 1; }
-    50% { transform: translateY(20px); height: 10px; width: 6px; opacity: 1; }
-    100% { transform: translateY(50px); height: 10px; width: 6px; opacity: 0; }
-}
-@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ======================================================
+   Animation helper utility classes
+   - small, readable utilities (use Tailwind for most layout)
+   ====================================================== */
 .animate-spin { animation: spin 1s linear infinite; }
-@keyframes fade-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 .animate-fade-in { animation: fade-in 0.5s ease-out forwards; }
-@keyframes plot-appear { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 .animate-plot-appear { animation: plot-appear 0.6s ease-out forwards; }
+.animate-pulse { animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+.animate-pulse-slow { animation: pulse-slow 4s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+.animate-fade-in-down { animation: fade-in-down 0.5s ease-out; }
 
-/* --- New Styles for Gemini-like Sidebar --- */
-/* These classes are used in page.tsx and Header.tsx for the new layout */
+/* ======================================================
+   Layout helpers: Gemini-like sidebar responsiveness
+   ====================================================== */
 @media (min-width: 768px) {
-  .md\:ml-20 {
-    margin-left: 5rem; /* 80px */
-  }
-  .md\:ml-64 {
-    margin-left: 16rem; /* 256px */
-  }
+  .md\:ml-20 { margin-left: 5rem; /* 80px */ }
+  .md\:ml-64 { margin-left: 16rem; /* 256px */ }
 }
-/* Ensure the main content shifts with the sidebar */
-.transition-all {
-  transition: margin-left 300ms ease-in-out;
-}
+.transition-all { transition: margin-left 300ms ease-in-out; }
 
-/* Unique feature: pulsating orb for active tabs in the sidebar */
-@keyframes pulse {
-  0%, 100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.5;
-  }
-}
-.animate-pulse {
-  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-}
-
-/* New chat styling */
+/* ======================================================
+   Chat / UI decorative classes
+   ====================================================== */
 .shadow-glow {
   box-shadow: 0 0 15px rgba(0, 119, 182, 0.3), 0 0 30px rgba(0, 119, 182, 0.1);
   transition: box-shadow 0.3s ease-in-out;
@@ -201,29 +285,64 @@ body {
 .dark .shadow-glow {
   box-shadow: 0 0 15px rgba(59, 130, 246, 0.3), 0 0 30px rgba(59, 130, 246, 0.1);
 }
-@keyframes pulse-slow {
-  0%, 100% {
-    transform: scale(1);
-    opacity: 1;
-  }
-  50% {
-    transform: scale(1.05);
-    opacity: 0.8;
-  }
+
+/* ======================================================
+   Theme variable mapping for components (Tailwind + CSS)
+   - map complex vars to simpler --color-* aliases used by components
+   ====================================================== */
+@theme inline {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
 }
-.animate-pulse-slow {
-  animation: pulse-slow 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+
+/* ======================================================
+   Tailwind base layer: apply border & ring defaults
+   - Keep minimal to avoid clashing with most Tailwind utilities
+   ====================================================== */
+@layer base {
+  * { @apply border-border outline-ring/50; }
+  body { @apply bg-background text-foreground; }
 }
-@keyframes fade-in-down {
-  from {
-    opacity: 0;
-    transform: translateY(-20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-.animate-fade-in-down {
-  animation: fade-in-down 0.5s ease-out;
-}
+
+/* ======================================================
+   Notes:
+   - Use .custom-scrollbar on elements where you want the compact scrollbar.
+   - Tweak --radius to change global border radii.
+   - For maximum browser compatibility, prefer the hex fallbacks (--*-hex variables).
+   - If you want automated dark-mode toggling, I can add a tiny JS snippet to:
+       1) follow system preference, and
+       2) persist user choice in localStorage.
+   ====================================================== */
