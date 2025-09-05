@@ -3,12 +3,13 @@
 import React, { useState, useEffect } from "react";
 import InsightCard from "./InsightCard";
 import HiddenHeatwaves from "./insights/pages/HiddenHeatwaves";
-// Note: Other detail pages would be imported here as well
-// import ThermoclineTilt from "./insights/pages/ThermoclineTilt"; 
-// etc.
+import { ArrowLeft } from "lucide-react";
+import dynamic from "next/dynamic";
+
+const Plot = dynamic(() => import("react-plotly.js"), { ssr: false });
 
 
-/* Removed the large INSIGHTS data object and internal DetailView component from here.
+/*
   This component now focuses on orchestrating the view (list vs detail)
   and passes control to specific insight page components.
 */
@@ -87,48 +88,6 @@ const INSIGHTS_METADATA = [
   },
 ];
 
-/* ===========================
-   Small reusable components
-   - InsightCard: tile used on the index page
-   - BackBar: top bar on detail page
-   - DetailView: per-insight page content (left/right plots + how)
-   =========================== */
-
-function InsightCard({ insight, onOpen }: { insight: any; onOpen: (id: string) => void }) {
-  return (
-    <article className="p-5 rounded-xl bg-white dark:bg-slate-800 border hover:shadow-lg transition-shadow h-full flex flex-col justify-between">
-      <div>
-        <div className="flex items-center gap-3 mb-4">
-          <div className={`p-2 rounded-md bg-gradient-to-br ${insight.color} text-white`} aria-hidden>
-            {/* simple icon placeholder */}
-            <svg className="h-6 w-6" viewBox="0 0 24 24" fill="none">
-              <circle cx="12" cy="12" r="8" stroke="currentColor" strokeWidth="1.5" />
-            </svg>
-          </div>
-          <div>
-            <h3 className="text-lg font-semibold">{insight.title}</h3>
-            <div className="text-xs text-muted-foreground mt-1">{insight.subtitle}</div>
-          </div>
-        </div>
-        <p className="text-sm text-muted-foreground">{insight.lead}</p>
-      </div>
-
-      <div className="mt-6 flex items-center justify-between">
-        <div className="text-xs text-muted-foreground">Focus: {insight.focusRegion}</div>
-        <div className="flex items-center gap-3">
-          <button
-            onClick={() => onOpen(insight.id)}
-            className={`px-4 py-2 rounded-full font-semibold text-white bg-gradient-to-r ${insight.color} shadow hover:scale-105 transition-transform`}
-            aria-label={`Open ${insight.title}`}
-          >
-            View Insight
-          </button>
-        </div>
-      </div>
-    </article>
-  );
-}
-
 function BackBar({ onBack, title, region }: { onBack: () => void; title: string; region: string }) {
   return (
     <div className="flex items-center justify-between mb-6">
@@ -146,10 +105,6 @@ function BackBar({ onBack, title, region }: { onBack: () => void; title: string;
   );
 }
 
-/* ===========================
-   DetailView: shows left+right Plot panels + 'how' bullets
-   - plotIdPrefix used to give stable DOM ids if you later want to export PNG via Plotly.
-   =========================== */
 function DetailView({
   insight,
   onBack,
@@ -161,13 +116,9 @@ function DetailView({
   const plotLeftId = `${insight.id}-left`;
   const plotRightId = `${insight.id}-right`;
 
-  // simple export PNG using Plotly if Plotly loaded and element present
   const exportPNG = async (plotId: string, filename: string) => {
     try {
-      // Plotly is available on window.Plotly if plotly.js bundle loaded
-      // react-plotly attaches DOM node with id=plotId if provided to Plot.
       const el = document.getElementById(plotId);
-      // safety: if not available, fallback to alert
       if (el && (window as any).Plotly && (window as any).Plotly.toImage) {
         const imgData = await (window as any).Plotly.toImage(el, { format: "png", width: 1200, height: 600 });
         const a = document.createElement("a");
@@ -184,7 +135,6 @@ function DetailView({
     }
   };
 
-  // basic layout props for Plotly traces
   const layoutBase = (title: string) => ({
     title,
     paper_bgcolor: "transparent",
@@ -245,10 +195,6 @@ function DetailView({
   );
 }
 
-/* ===========================
-   Main component exported by file
-   - Renders index grid or detail view based on selectedId state
-   =========================== */
 export default function InsightsPackedSingleFile() {
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
@@ -269,9 +215,7 @@ export default function InsightsPackedSingleFile() {
     if (typeof window !== "undefined") document.body.style.overflow = "";
   };
   
-  // RENDER LOGIC
   if (!selectedId) {
-    // Index Grid View
     return (
       <main className="min-h-screen p-6 md:p-12 bg-slate-50 dark:bg-slate-900 transition-colors duration-500 rounded-xl shadow-lg">
         <header className="max-w-6xl mx-auto mb-8">
@@ -290,16 +234,9 @@ export default function InsightsPackedSingleFile() {
     );
   }
 
-  // Detail View
-  // Here we can select which component to render based on the ID
   const renderDetailView = () => {
-    switch(selectedId) {
-      case 'hidden-heatwaves':
-        return <HiddenHeatwaves onBack={closeInsight} />;
-      // ... cases for other insights would go here
-      // case 'thermocline-tilt':
-      //   return <ThermoclineTilt onBack={closeInsight} />;
-      default:
+    const insight = INSIGHTS_METADATA.find(i => i.id === selectedId);
+    if (!insight) {
         return (
             <div className="text-center p-8 bg-white dark:bg-slate-800 rounded-lg">
                 <h2 className="text-xl font-semibold">Insight component not found</h2>
@@ -308,12 +245,19 @@ export default function InsightsPackedSingleFile() {
             </div>
         );
     }
+    
+    switch(selectedId) {
+      case 'hidden-heatwaves':
+        return <HiddenHeatwaves onBack={closeInsight} />;
+      default:
+        return <DetailView insight={insight} onBack={closeInsight} />;
+    }
   }
 
   return (
     <main className="min-h-screen p-6 md:p-12 bg-slate-50 dark:bg-slate-900">
       <div className="max-w-6xl mx-auto">
-        <DetailView insight={insight} onBack={closeInsight} />
+        {renderDetailView()}
       </div>
     </main>
   );

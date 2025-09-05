@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { LatLngExpression } from "leaflet";
-import { MessageSquare, BarChart2, GitCompare, Zap, Info, User, GraduationCap } from 'lucide-react';
+import { motion, AnimatePresence } from "framer-motion";
 
 // Import modular components
 import Header from "./components/ui/Header";
@@ -20,7 +20,7 @@ import NewbieHelper from "./components/tabs/newbie/NewbieHelper";
 import NewbieDiagram from "./components/tabs/newbie/NewbieDiagram";
 import NewbieDistinguish from "./components/tabs/newbie/NewbieDistinguish";
 
-import { RESEARCHER_TABS, NEWBIE_TABS, Tab, MapTransition, Mode } from "./types";
+import { RESEARCHER_TABS, NEWBIE_TABS, Tab, MapTransition, Mode, Message } from "./types";
 
 const mockFloats = [
     { id: 1, platform_number: 98765, project_name: "INCOIS", last_cycle: 15, position: [-10.0, 85.0] as LatLngExpression, trajectory: [[-14.0, 75.0], [-12.5, 76.5], [-11.0, 75.5], [-10.5, 78.0], [-9.0, 79.0], [-11.0, 82.0], [-12.0, 84.0], [-10.0, 85.0]] as LatLngExpression[] },
@@ -34,7 +34,7 @@ export default function Page() {
   const [showWaveAnimation, setShowWaveAnimation] = useState(false);
   const [showDrippingEffect, setShowDrippingEffect] = useState(false);
   const [activeTab, setActiveTab] = useState<Tab>("chat");
-  const [messages, setMessages] = useState([]);
+  const [messages, setMessages] = useState<Message[]>([]);
   const [chatHasVisuals, setChatHasVisuals] = useState(false);
   
   const [mapCenter, setMapCenter] = useState<LatLngExpression>([0, 80]);
@@ -42,21 +42,44 @@ export default function Page() {
   const [selectedFloat, setSelectedFloat] = useState(null);
   const [regionSummary, setRegionSummary] = useState(null);
   const [mapTransition, setMapTransition] = useState<MapTransition>('fly');
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true); // Gemini-style sidebar is open by default on desktop
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   
   const [filters, setFilters] = useState({ startDate: "2023-03-01", endDate: "2023-03-31", region: "Indian Ocean", parameter: "Salinity", floatId: "" });
 
-  // New state for dynamic insights
   const [currentView, setCurrentView] = useState<'dashboard' | 'insight'>('dashboard');
   const [activeInsight, setActiveInsight] = useState<any>(null);
 
 
   useEffect(() => { document.documentElement.classList.toggle("dark", theme === "dark"); }, [theme]);
 
-  const handleFloatSelect = (float: any) => { setSelectedFloat(float); setMapCenter(float.position); setMapZoom(7); };
-  const handleFilterChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => { const { name, value } = e.target; setFilters((prev) => ({ ...prev, [name]: value })); };
-  const handleApplyFilters = () => { /* ... existing logic ... */ };
-  const handleDetailClose = () => { setSelectedFloat(null); setRegionSummary(null); };
+  const handleFloatSelect = (float: any) => {
+    setMapTransition('fly');
+    setRegionSummary(null);
+    setSelectedFloat(float);
+    setMapCenter(float.position);
+    setMapZoom(7);
+  };
+
+  const handleFilterChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    setFilters((prev) => ({ ...prev, [name]: value }));
+  };
+  
+  const handleApplyFilters = () => {
+    const targetFloat = mockFloats.find(f => f.platform_number.toString() === filters.floatId);
+    if (targetFloat) {
+      setMapTransition('fly');
+      setSelectedFloat(targetFloat);
+      setMapCenter(targetFloat.position);
+      setMapZoom(8);
+      setRegionSummary(null);
+    }
+  };
+  
+  const handleDetailClose = () => {
+    setSelectedFloat(null);
+    setRegionSummary(null);
+  };
 
   const handleModeToggle = () => {
     if (mode === "researcher") {
@@ -76,37 +99,25 @@ export default function Page() {
       setShowDrippingEffect(false);
     }
   };
+  
+  const handleSendMessage = (newMessage: Message) => {
+    const updatedMessages = [...messages, newMessage];
+    setMessages(updatedMessages);
 
-  const handleFloatSelect = (float) => { setMapTransition('fly'); setRegionSummary(null); setSelectedFloat(float); setMapCenter(float.position); setMapZoom(7); };
-  const handleFilterChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => { const { name, value } = e.target; setFilters((prev) => ({ ...prev, [name]: value })); };
-  const handleApplyFilters = () => { 
-    const targetFloat = mockFloats.find(f => f.platform_number.toString() === filters.floatId);
-    if (targetFloat) {
-      setMapTransition('fly');
-      setSelectedFloat(targetFloat);
-      setMapCenter(targetFloat.position);
-      setMapZoom(8);
-      setRegionSummary(null);
-    } else {
-        // Standard chat response logic
-        setMessages(updatedMessages);
-        
-        // Add a mock bot reply for other messages
-        if (newMessage.sender === 'user') {
-            const botReply: Message = {
-                id: Date.now() + 1,
-                sender: 'bot',
-                text: `This is a standard reply to: "${newMessage.text}"`
-            };
-            setTimeout(() => setMessages(prev => [...prev, botReply]), 1000);
-        }
+    if (newMessage.sender === 'user') {
+      const botReply: Message = {
+        id: Date.now() + 1,
+        sender: 'bot',
+        text: `This is a standard reply to: "${newMessage.text}"`
+      };
+      setTimeout(() => setMessages(prev => [...prev, botReply]), 1000);
     }
   };
 
   const renderDashboard = () => {
     if (mode === 'newbie') {
       switch (activeTab) {
-        case "chat": return <NewbieHelper messages={messages} setMessages={setMessages} />;
+        case "chat": return <NewbieHelper messages={messages} setMessages={setMessages} theme={theme} handleNewChat={() => setMessages([])} />;
         case "visualize": return (
           <NewbieDiagram
             floats={mockFloats} filters={filters} handleFilterChange={handleFilterChange} handleApplyFilters={handleApplyFilters}
@@ -141,9 +152,9 @@ export default function Page() {
     <div className="flex h-screen bg-background text-foreground font-sans">
       <Header 
         theme={theme} setTheme={setTheme} activeTab={activeTab} setActiveTab={setActiveTab} 
-        mode={mode} onModeToggle={handleModeToggle} showDrippingEffect={showDrippingEffect}
+        mode={mode} onModeToggle={handleModeToggle}
         isSidebarOpen={isSidebarOpen} setIsSidebarOpen={setIsSidebarOpen}
-        showDrippingEffect={false} // This can be removed or repurposed
+        showDrippingEffect={showDrippingEffect}
       />
       <main className={`flex-1 transition-all duration-300 ${isSidebarOpen ? 'md:ml-64' : 'md:ml-20'}`}>
         <AnimatePresence mode="wait">

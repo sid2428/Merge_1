@@ -14,7 +14,7 @@ interface ChatTabProps {
   isEmbedded?: boolean; // New prop to handle layout variations
 }
 
-export default function ChatTab({ messages, setMessages, theme }) {
+export default function ChatTab({ messages, onSendMessage, theme, isEmbedded = false }: ChatTabProps) {
   const [inputMessage, setInputMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isLaunching, setIsLaunching] = useState(false);
@@ -26,7 +26,7 @@ export default function ChatTab({ messages, setMessages, theme }) {
 
   useEffect(scrollToBottom, [messages]);
 
-  const mockApiResponse = (userMessage) => {
+  const mockApiResponse = (userMessageText: string) => {
     setIsLoading(true);
     setIsLaunching(true);
 
@@ -35,7 +35,7 @@ export default function ChatTab({ messages, setMessages, theme }) {
       let botResponse = "Here are the visualizations based on your request.";
       let hasVisual = true;
       
-      const lowerCaseMessage = userMessage.toLowerCase();
+      const lowerCaseMessage = userMessageText.toLowerCase();
       if (lowerCaseMessage.includes("hello") || lowerCaseMessage.includes("hi")) {
         botResponse = "Hello there! I'm FloatChat AI. How can I assist you with ARGO float data today?";
         hasVisual = false;
@@ -43,23 +43,18 @@ export default function ChatTab({ messages, setMessages, theme }) {
         botResponse = "As an AI, I don't ponder philosophical questions, but I can help you find data on ocean life!";
         hasVisual = false;
       }
-
-      setMessages((prevMessages) => [
-        ...prevMessages,
-        { id: prevMessages.length + 1, text: botResponse, sender: "bot", visual: hasVisual },
-      ]);
+      
+      onSendMessage({ id: Date.now(), text: botResponse, sender: "bot", visual: hasVisual });
       setIsLoading(false);
       scrollToBottom();
     }, 2000);
   };
 
-  const handleSendMessage = (e) => {
+  const handleSendMessage = (e: React.FormEvent) => {
     e.preventDefault();
     if (inputMessage.trim() && !isLoading) {
-      setMessages((prevMessages) => [
-        ...prevMessages,
-        { id: prevMessages.length + 1, text: inputMessage, sender: "user" },
-      ]);
+      const newUserMessage: Message = { id: Date.now(), text: inputMessage, sender: "user" };
+      onSendMessage(newUserMessage);
       mockApiResponse(inputMessage);
       setInputMessage("");
     }
@@ -70,7 +65,7 @@ export default function ChatTab({ messages, setMessages, theme }) {
     : "flex flex-col h-full bg-card rounded-2xl shadow-glow border border-gray-200 dark:border-gray-800 p-6 sm:p-8 relative";
 
   return (
-    <div className="flex flex-col h-full bg-card rounded-2xl shadow-glow border border-gray-200 dark:border-gray-800 p-6 sm:p-8 relative">
+    <div className={containerClasses}>
       <div className="flex items-center text-xl font-semibold text-foreground/80 mb-6 pb-4 border-b border-gray-200 dark:border-gray-700">
         <Sparkles size={24} className="mr-3 text-primary" />
         FloatChat AI
